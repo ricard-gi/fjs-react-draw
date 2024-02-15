@@ -1,76 +1,129 @@
 
 import { useState } from "react";
+import DirectionButton from "./DirectionButton";
+import Box from "./Box";
+import { zeros, randomOf, freePositions, addRandomItem } from './helpers';
 
-const Box = ({ value }) => (
-    <div className="p-4 h-full w-full h-32 border rounded-xl bg-slate-500">
-        <p className="text-white text-center text-5xl">{value ? value : ''}</p>
-    </div>
-);
+// tailwind: grid-cols-3 grid-cols-4 grid-cols-5
+// ample/alt del grid
+const SIZE = 3;
 
-let initialMap = Array(16).fill(0);
+//mapa inicial. array de SIZE*SIZE zeros
+let initialMap = zeros(SIZE * SIZE);
 
-// random int de 1 a max
-const randomInt = (max) => Math.floor(Math.random() * max) + 1;
-// element random d'una llista donada
-const randomOf = (arr) => arr[Math.floor(Math.random() * arr.length)]
-// retorna llista d'indexos lliures (value == 0)
-const freePositions = arr => arr.map((e, i) => e ? 0 : i).filter(e => e);
+//afegim dos primers randoms
+addRandomItem(initialMap, 2)
+addRandomItem(initialMap, 2)
 
-initialMap[randomOf(freePositions(initialMap))] = 2;
-initialMap[randomOf(freePositions(initialMap))] = 2;
-initialMap[randomOf(freePositions(initialMap))] = 2;
-initialMap[randomOf(freePositions(initialMap))] = 2;
-initialMap[randomOf(freePositions(initialMap))] = 2;
+
+// arr pot ser 4x4, 5x5...
+const getColumn = (arr, n) => zeros(SIZE).map((e, i) => arr[n + SIZE * i])
+const setColumn = (arr, n, values) => {
+    zeros(SIZE).forEach((e, i) => {
+        arr[n + SIZE * i] = values[i];
+    })
+}
+
+const getRow = (arr, n) => zeros(SIZE).map((e, i) => arr[n * SIZE + i])
+const setRow = (arr, n, values) => {
+    zeros(SIZE).forEach((e, i) => {
+        arr[n * SIZE + i] = values[i];
+    })
+}
+
+//funció que calcula la cosa
+// reb un vector tipus: [2,0,2,0,8,4]
+// depenent de reverse retorna: [4,8,4,0,0,0] o [0,0,0,4,8,4]
+// elimina zeros, suma iguals
+const processArray = (values, reverse) => {
+
+    // creem nova array, eliminant 0s
+    let newValues = values.filter(e => e);
+
+    // si no queda res, retornem buida
+    if (!newValues.length) return zeros(SIZE)
+
+    if (reverse) newValues = newValues.reverse();
+
+    let vector = [];
+    for (let i = 0; i < SIZE; i++) {
+        // mirem si dos valors coincidents, només si no som a l'últim de la fila
+        if (i<SIZE && newValues[i] == newValues[i + 1]) {
+            // si sí, els sumem i ens saltem la següent iteració
+            vector.push(newValues[i] * 2)
+            i++
+        } else {
+            // si no, impulsem valor actual
+            vector.push(newValues[i])
+        }
+    }
+    const zeroFill = zeros(SIZE - vector.length)
+    vector = [...vector, ...zeroFill]
+    //retornem vector o revers, depenent
+    return reverse ? vector.reverse() : vector;
+
+}
+
+
 
 export default () => {
 
+    const [mapa, setMapa] = useState(initialMap);
+    const [gameOver, setGameOver] = useState(false);
 
-    const [map, setMap] = useState(initialMap);
+    //direction: up, down, left, right
+    const move = (direction) => {
+        let col, reverse;
+        if (direction==='up') {
+            col=true;
+            reverse=false;
+        }
+        if (direction==='down') {
+            col=true;
+            reverse=true;
+        }
+        if (direction==='left') {
+            col=false;
+            reverse=false;
+        }
+        if (direction==='right') {
+            col=false;
+            reverse=true;
+        }
 
-    // mou tot amunt una fila
-    const up = () => {
-        // desem posicions inicials
-        const [i1, i2, i3, i4, ii1, ii2, ii3, ii4, ...resta] = map;
-        const nouMap = [i1 + ii1, i2 + ii2, i3 + ii3, i4 + ii4, ...resta, 0, 0, 0, 0]
-        setMap(nouMap)
+        const nouMap = [...mapa];
 
+        zeros(SIZE).forEach((e, i) => {
+            let vector = col ? getColumn(nouMap, i) : getRow(nouMap, i);
+            console.log(vector)
+            vector = processArray(vector, reverse)
+            if (col) setColumn(nouMap, i, vector); else setRow(nouMap, i, vector);
+        })
+        const frees = freePositions(nouMap);
+        if (frees.length) {
+            nouMap[randomOf(frees)] = 2;
+        } else {
+            setGameOver(true)
+        }
+        setMapa(nouMap)
     }
-    const left = () => { }
-    const right = () => { }
-    const down = () => { }
 
 
     return (
         <>
-            <div className="w-1/2 m-auto grid gap-8 grid-cols-4">
-                {map.map((e, i) => <Box key={i} value={e} />)}
-      
-                <button className="w-full bg-slate-300 rounded-xl h-20 flex justify-center items-center" onClick={left}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrow-badge-left" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M11 17h6l-4 -5l4 -5h-6l-4 5z" />
-                    </svg>
-                </button>
-                <button className="w-full bg-slate-300 rounded-xl h-20 flex justify-center items-center" onClick={up}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrow-badge-up" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M17 11v6l-5 -4l-5 4v-6l5 -4z" />
-                    </svg>
-                </button>
-                <button className="w-full bg-slate-300 rounded-xl h-20 flex justify-center items-center" onClick={down}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrow-badge-down" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M17 13v-6l-5 4l-5 -4v6l5 4z" />
-                    </svg>
-
-                </button>
-                <button className="w-full bg-slate-300 rounded-xl h-20 flex justify-center items-center" onClick={right}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-arrow-badge-right" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M13 7h-6l4 5l-4 5h6l4 -5z" />
-                    </svg>
-                </button>
+            <br />
+            <div className={`w-1/2 m-auto grid gap-8 grid-cols-${SIZE}`}>
+                {mapa.map((e, i) => <Box key={i} value={e} />)}
             </div>
+            <br />
+            <div className={`w-1/2 m-auto grid gap-8 grid-cols-4`}>
+                {
+                    ["up", "left", "right", "down"].map((dir,idx) => <DirectionButton disabled={gameOver} direction={dir} key={idx} action={()=>move(dir)} />)
+                }
+            </div>
+            <br />
+            {gameOver ? <h1 className="text-red-700 text-5xl text-center" >GAME OVER</h1> : <h1></h1>}
+            <br />
         </>
     )
 }
