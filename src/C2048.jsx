@@ -2,11 +2,11 @@
 import { useState } from "react";
 import DirectionButton from "./DirectionButton";
 import Box from "./Box";
-import { zeros, randomOf, freePositions, addRandomItem, arraysIguals } from './helpers';
+import { zeros, randomOf, freePositions, addRandomItem, arraysIguals, getColumn, getRow, setColumn, setRow, processArray } from './helpers';
 
 // tailwind: grid-cols-3 grid-cols-4 grid-cols-5
 // ample/alt del grid
-const SIZE = 3;
+const SIZE = 5;
 
 //mapa inicial. array de SIZE*SIZE zeros
 let initialMap = zeros(SIZE * SIZE);
@@ -14,55 +14,6 @@ let initialMap = zeros(SIZE * SIZE);
 //afegim dos primers randoms
 addRandomItem(initialMap, 2)
 addRandomItem(initialMap, 2)
-
-
-// arr pot ser 4x4, 5x5...
-const getColumn = (arr, n) => zeros(SIZE).map((e, i) => arr[n + SIZE * i])
-const setColumn = (arr, n, values) => {
-    zeros(SIZE).forEach((e, i) => {
-        arr[n + SIZE * i] = values[i];
-    })
-}
-
-const getRow = (arr, n) => zeros(SIZE).map((e, i) => arr[n * SIZE + i])
-const setRow = (arr, n, values) => {
-    zeros(SIZE).forEach((e, i) => {
-        arr[n * SIZE + i] = values[i];
-    })
-}
-
-//funció que calcula la cosa
-// reb un vector tipus: [2,0,2,0,8,4]
-// depenent de reverse retorna: [4,8,4,0,0,0] o [0,0,0,4,8,4]
-// elimina zeros, suma iguals
-const processArray = (values, reverse) => {
-
-    // creem nova array, eliminant 0s
-    let newValues = values.filter(e => e);
-
-    // si no queda res, retornem buida
-    if (!newValues.length) return zeros(SIZE)
-
-    if (reverse) newValues = newValues.reverse();
-
-    let vector = [];
-    for (let i = 0; i < SIZE; i++) {
-        // mirem si dos valors coincidents, només si no som a l'últim de la fila
-        if (i<SIZE && newValues[i] == newValues[i + 1]) {
-            // si sí, els sumem i ens saltem la següent iteració
-            vector.push(newValues[i] * 2)
-            i++
-        } else {
-            // si no, impulsem valor actual
-            vector.push(newValues[i])
-        }
-    }
-    const zeroFill = zeros(SIZE - vector.length)
-    vector = [...vector, ...zeroFill]
-    //retornem vector o revers, depenent
-    return reverse ? vector.reverse() : vector;
-
-}
 
 
 
@@ -95,10 +46,10 @@ export default () => {
         const nouMap = [...mapa];
 
         zeros(SIZE).forEach((e, i) => {
-            let vector = col ? getColumn(nouMap, i) : getRow(nouMap, i);
-            console.log(vector)
-            vector = processArray(vector, reverse)
-            if (col) setColumn(nouMap, i, vector); else setRow(nouMap, i, vector);
+            let vector = col ? getColumn(SIZE, nouMap, i) : getRow(SIZE, nouMap, i);
+            //console.log(vector)
+            vector = processArray(SIZE, vector, reverse)
+            if (col) setColumn(SIZE, nouMap, i, vector); else setRow(SIZE, nouMap, i, vector);
         })
 
         const frees = freePositions(nouMap);
