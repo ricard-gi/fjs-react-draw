@@ -18,4 +18,8 @@ const addRandomItem = (theMap, value) => {
     return true;
 }
 
-export { zeros, randomOf, freePositions, addRandomItem }
+
+const arraysIguals = (arr1, arr2) => arr1.length==arr2.length && arr1.every((e,i) => e==arr2[i] )
+
+
+export { zeros, randomOf, freePositions, addRandomItem, arraysIguals }

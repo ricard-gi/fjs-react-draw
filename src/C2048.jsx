@@ -2,7 +2,7 @@
 import { useState } from "react";
 import DirectionButton from "./DirectionButton";
 import Box from "./Box";
-import { zeros, randomOf, freePositions, addRandomItem } from './helpers';
+import { zeros, randomOf, freePositions, addRandomItem, arraysIguals } from './helpers';
 
 // tailwind: grid-cols-3 grid-cols-4 grid-cols-5
 // ample/alt del grid
@@ -70,6 +70,7 @@ export default () => {
 
     const [mapa, setMapa] = useState(initialMap);
     const [gameOver, setGameOver] = useState(false);
+    const [lastMove, setLastMove] = useState('')
 
     //direction: up, down, left, right
     const move = (direction) => {
@@ -99,12 +100,16 @@ export default () => {
             vector = processArray(vector, reverse)
             if (col) setColumn(nouMap, i, vector); else setRow(nouMap, i, vector);
         })
+
         const frees = freePositions(nouMap);
         if (frees.length) {
             nouMap[randomOf(frees)] = 2;
         } else {
-            setGameOver(true)
+            //només considerem que estem a gameover si no ha caviat res des de l'última jugada
+            // i el moviment col és el mateix que l'anterior...
+            if (arraysIguals(nouMap, mapa) && lastMove!==col) setGameOver(true)
         }
+        setLastMove(col)
         setMapa(nouMap)
     }
 
