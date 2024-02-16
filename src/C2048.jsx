@@ -57,7 +57,7 @@ export default () => {
             nouMap[randomOf(frees)] = 2;
         } else {
             //només considerem que estem a gameover si no ha caviat res des de l'última jugada
-            // i el moviment col és el mateix que l'anterior...
+            // i el moviment col és diferent de l'anterior...
             if (arraysIguals(nouMap, mapa) && lastMove!==col) setGameOver(true)
         }
         setLastMove(col)

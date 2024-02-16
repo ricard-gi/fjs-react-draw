@@ -10,6 +10,7 @@ const formata = (seconds) => {
 export default () => {
     const [secs, setSecs] = useState(0);
     const [play, setPlay] = useState(true)
+  
     useEffect(() => {
         let interval;
         if(play){
@@ -19,9 +20,13 @@ export default () => {
         }
         return () => clearInterval(interval);
     }, [ secs,play]);
+
+    //text-green-500 text-red-500
+    const color = play ? "green" : "red"
+
     return (
         <>
-            <h1 className={`${play ? "text-green-500" : "text-red-500"} text-2xl`}>{formata(secs)}</h1>
+            <h1 className={`text-${color}-500 text-2xl`}>{formata(secs)}</h1>
             <br />
             <button className="border p-4 bg-green-300" onClick={() => setPlay(!play)}>Start/Stop</button>
         </>

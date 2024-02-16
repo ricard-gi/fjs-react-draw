@@ -12,7 +12,7 @@ export default () => {
 
     return (
         <>
-            <div className="grid grid-cols-4 gap-8 grid-row">
+            <div className="grid grid-cols-2 gap-8 ">
                 <div className="w-full h-100">
                     <Meteo />
 
