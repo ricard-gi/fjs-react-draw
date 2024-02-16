@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import AdrPointer from './AdrPointer';
 
-
 const defaultPlace = {
   "adr": "Girona",
   "lat": 41.99103588081312,
@@ -15,9 +14,7 @@ export default () => {
 
   return (
     <>
-
-          <AdrPointer adrState={[address, setAddress]} placeState={[place, setPlace]} />
-
+      <AdrPointer adrState={[address, setAddress]} placeState={[place, setPlace]} />
     </>
   )
 }

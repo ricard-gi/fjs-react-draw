@@ -1,6 +1,6 @@
 import C2048 from './C2048'
 import Stars from './Stars'
-
+import Meteo from './Meteo'
 
 export default ()=>{
 
@@ -8,7 +8,7 @@ export default ()=>{
 
     return (
         <>
-            <C2048 />        
+            <Meteo />        
         </>
     )
 }
