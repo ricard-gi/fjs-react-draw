@@ -14,7 +14,7 @@ export default () => {
 
     return (
         <>
-            <div className="grid grid-cols-2 gap-8 ">
+          {/*  <div className="grid grid-cols-2 gap-8 ">
                 <div className="w-full h-100">
                     <SolidGauges />
 
@@ -32,12 +32,12 @@ export default () => {
                     <Crono />
                 </div>
             </div>
-
+    */}
             <br />
             <br />
 
 
-            <div className="w-1/2 m-auto">
+            <div className="w-2/3 m-auto">
               
                 <Map />
             </div>

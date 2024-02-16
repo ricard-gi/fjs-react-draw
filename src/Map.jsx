@@ -12,9 +12,23 @@ export default () => {
   const [address, setAddress] = useState(null);
   const [marcadors, setMarcadors] = useState([defaultPlace]);
   const [place, setPlace] = useState(defaultPlace);
+  const [cerca, setCerca] = useState('')
 
   const [center, setCenter] = useState([place.lat, place.long]);
 
+  function cercaAdr(){
+    const url = "https://nominatim.openstreetmap.org/search?format=json&q=";
+    if (cerca){
+      fetch(url+encodeURI(cerca))
+      .then(d => d.json())
+      .then(data => data[0])
+      .then(item => {
+        setPlace({adr: item.display_name, lat: item.lat, long: item.lon})
+        console.log(item)
+      })
+
+    }
+  }
 
   function getLocation() {
     if (navigator.geolocation) {
@@ -78,12 +92,17 @@ export default () => {
 
   return (
     <>
+
+    <br />
+    <input className='border p-2 w-[300px]' name="cerca" onChange={(e)=>setCerca(e.target.value)} />
+    <button className="border p-2 m-8" onClick={cercaAdr}>Cerca adreça</button>
+    <br />
       <h1 className="text-2xl" >{place.adr}</h1>
       <br />
       <MapContainer
         className="el-mapa"
         center={center}
-        zoom={10}
+        zoom={20}
         scrollWheelZoom={true}
       >
         <CentraMapa centre={center} />
