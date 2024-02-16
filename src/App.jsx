@@ -5,6 +5,7 @@ import Barres from './Barres'
 import Pie from './Pie'
 import Relotge from './Relotge'
 import Crono from './Crono'
+import Map from './Map'
 
 export default () => {
 
@@ -30,6 +31,20 @@ export default () => {
                     <Crono />
                 </div>
             </div>
+
+            <br />
+            <br />
+
+
+            <div className="w-1/2 m-auto">
+              
+                <Map />
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+
         </>
     )
 }
