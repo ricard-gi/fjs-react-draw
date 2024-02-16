@@ -9,7 +9,7 @@ const trackColors = Highcharts.getOptions().colors.map(color =>
   new Highcharts.Color(color).setOpacity(0.3).get()
 );
 
-const Barres = () => {
+const SolidGauges = () => {
 
   const [opcions, setOpcions] = useState([]);
 
@@ -133,11 +133,7 @@ const Barres = () => {
     }
 
     setOpcions(opcionsGrafic)
-    // Renderizar el gráfico
-    //Highcharts.chart('grafic', opcionsGrafic);
   }, []);
-
-  //return <div id="grafic" />;
 
 
   return (
@@ -148,7 +144,7 @@ const Barres = () => {
   )
 };
 
-export default Barres;
+export default SolidGauges;
 
 
 
